@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roll Call - Facility Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inria Serif', serif;
+            background-color: #D9D9D9;
+            min-height: 100vh;
+        }
+
+        .container {
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .centered {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 100px);
+            flex-direction: column;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 20px;
+            align-items: center;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            color: black;
+            font-family: 'Inria Serif', serif;
+        }
+
+        .nav-button:hover {
+            text-decoration: underline;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #5E7695;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 18px;
+            color: #5E7695;
+            margin-bottom: 30px;
+        }
+
+        .button {
+            font-family: sans-serif;
+            font-size: 16px;
+            color: #FFFFFF;
+            background-color: #D9D9D9;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .button:hover {
+            opacity: 0.9;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            color: #5E7695;
+            margin-bottom: 10px;
+            text-align: left;
+            max-width: 300px;
+            width: 100%;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 300px;
+            width: 100%;
+        }
+
+        .building-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            padding: 20px;
+            max-width: 700px;
+            width: 100%;
+        }
+
+        .building-card {
+            padding: 189px 151px;
+            background-color: #E8E8E8;
+            border: 2px solid #999;
+            border-radius: 8px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .building-card:hover {
+            background-color: #DDD;
+        }
+
+        .building-label {
+            font-family: sans-serif;
+            font-size: 9px;
+            color: black;
+            position: absolute;
+        }
+
+        .scan-link {
+            font-size: 13px;
+            color: #5E7695;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .scan-link:hover {
+            opacity: 0.8;
+        }
+
+        .camera-view {
+            width: 300px;
+            height: 400px;
+            background-color: #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #666;
+            border-radius: 8px;
+            margin: 20px auto;
+        }
+
+        .chart-container {
+            margin-top: 30px;
+            margin-bottom: 30px;
+            padding-left: 60px;
+        }
+
+        .chart-title {
+            font-family: 'Inria Serif', serif;
+            font-size: 16px;
+            color: #5E7695;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .chart-content {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .y-axis-label {
+            display: flex;
+            flex-direction: column;
+            font-size: 12px;
+            color: #5E7695;
+            font-family: 'Inria Serif', serif;
+            margin-right: 10px;
+            margin-top: 50px;
+            line-height: 1.2;
+        }
+
+        .chart-area {
+            display: flex;
+            align-items: flex-end;
+            height: 200px;
+            border-left: 2px solid black;
+            border-bottom: 2px solid black;
+            padding-left: 20px;
+            padding-bottom: 10px;
+            gap: 30px;
+        }
+
+        .bar-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .bar {
+            width: 50px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 5px;
+        }
+
+        .bar-value {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .x-axis-labels {
+            display: flex;
+            padding-left: 20px;
+            gap: 30px;
+            margin-top: 8px;
+        }
+
+        .x-label {
+            flex: 1;
+            text-align: center;
+            font-size: 12px;
+            color: black;
+            font-family: 'Inria Serif', serif;
+        }
+
+        .logged-by {
+            font-size: 12px;
+            color: #5E7695;
+            margin-top: 15px;
+            font-family: 'Inria Serif', serif;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .content-wrapper {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .user-icon {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script>
+        // State management
+        let state = {
+            currentPage: 'login',
+            selectedUser: null,
+            selectedBuilding: null,
+            selectedHostelBuilding: null,
+            selectedFloor: null,
+            scanStep: 0,
+            scanType: null,
+            showAirResults: false
+        };
+
+        // Navigation functions
+        function goToPage(page) {
+            state.currentPage = page;
+            render();
+        }
+
+        function goBack() {
+            if (['scan-soap', 'scan-air', 'scan-toilet'].includes(state.currentPage)) {
+                state.scanStep = 0;
+                state.scanType = null;
+                state.showAirResults = false;
+                goToPage('scan-options');
+            } else if (state.currentPage === 'scan-options') {
+                goToPage('floor-select');
+            } else if (state.currentPage === 'cubicle-info') {
+                goToPage('floor-select');
+            } else if (state.currentPage === 'floor-select') {
+                if (state.selectedBuilding === 'Hostel' && state.selectedHostelBuilding) {
+                    state.selectedHostelBuilding = null;
+                } else if (state.selectedBuilding === 'Hostel') {
+                    goToPage(state.selectedUser === 'Bo Chen' ? 'cleaner-home' : 'manager-home');
+                } else {
+                    goToPage(state.selectedUser === 'Bo Chen' ? 'cleaner-home' : 'manager-home');
+                }
+            } else if (['cleaner-home', 'manager-home'].includes(state.currentPage)) {
+                goToPage('profile');
+            } else if (state.currentPage === 'profile') {
+                goToPage('login');
+            } else if (state.currentPage === 'hostel-building-select') {
+                goToPage(state.selectedUser === 'Bo Chen' ? 'cleaner-home' : 'manager-home');
+            }
+        }
+
+        // Helper functions
+        function getBarColor(percentage) {
+            if (percentage >= 90) return '#006400';
+            if (percentage >= 60) return '#90EE90';
+            if (percentage >= 30) return '#FFFF00';
+            if (percentage >= 5) return '#FFA500';
+            return '#FF0000';
+        }
+
+        function createBarChart(data, title, yLabel, loggedBy) {
+            const yLabelWords = yLabel.split(' ');
+            return `
+                <div class="chart-container">
+                    <div class="chart-title">${title}</div>
+                    <div class="chart-content">
+                        <div class="y-axis-label">
+                            ${yLabelWords.map(word => `<div>${word}</div>`).join('')}
+                        </div>
+                        <div>
+                            <div class="chart-area">
+                                ${data.map(item => `
+                                    <div class="bar-item">
+                                        <div class="bar" style="height: ${item.value * 1.8}px; background-color: ${getBarColor(item.value)}">
+                                            <span class="bar-value">${item.value}%</span>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="x-axis-labels">
+                                ${data.map(item => `<div class="x-label">${item.label}</div>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    ${loggedBy ? `<div class="logged-by">Logged by ${loggedBy}</div>` : ''}
+                </div>
+            `;
+        }
+
+        function createHeader(showCustomBack = false, customBackText = 'Back') {
+            const homePage = state.selectedUser === 'Bo Chen' ? 'cleaner-home' : 'manager-home';
+            return `
+                <div class="header">
+                    <div>
+                        ${showCustomBack ? 
+                            `<button class="nav-button" onclick="goToPage('scan-options'); state.scanStep = 0; state.showAirResults = false; render();">${customBackText}</button>` :
+                            `<button class="nav-button" onclick="goBack()">Back</button>`
+                        }
+                    </div>
+                    <div class="header-right">
+                        <button class="nav-button" onclick="goToPage('${homePage}')">Home</button>
+                        <button class="nav-button" onclick="state.selectedUser = null; goToPage('login')">Log out</button>
+                        <button class="nav-button" onclick="goToPage('profile')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Page renderers
+        function renderLoginPage() {
+            return `
+                <div class="container centered">
+                    <div style="text-align: center;">
+                        <h1>Roll Call</h1>
+                        <button class="button" onclick="goToPage('profile')">Login</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProfilePage() {
+            return `
+                <div class="container">
+                    <div style="padding: 10px 20px;">
+                        <button class="nav-button" onclick="goToPage('login')">Back</button>
+                    </div>
+                    <div class="centered">
+                        <h1>Roll Call</h1>
+                        <div class="form-label">Name:</div>
+                        <div class="button-group">
+                            <button class="button" onclick="state.selectedUser = 'Bo Chen'; goToPage('cleaner-home')">Bo Chen</button>
+                            <button class="button" onclick="state.selectedUser = 'Merilyn Ni'; goToPage('manager-home')">Merilyn Ni</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderBuildingGrid() {
+            return `
+                <div class="centered">
+                    <div class="building-grid">
+                        <button class="building-card" onclick="state.selectedBuilding = 'Canteen'; goToPage('floor-select')">
+                            <span class="building-label" style="top: 10px; left: 10px;">Canteen</span>
+                        </button>
+                        <button class="building-card" onclick="state.selectedBuilding = 'Library'; goToPage('floor-select')">
+                            <span class="building-label" style="top: 10px; right: 10px;">Library</span>
+                        </button>
+                        <button class="building-card" onclick="state.selectedBuilding = 'Buildings'; goToPage('floor-select')">
+                            <span class="building-label" style="bottom: 10px; left: 10px;">Buildings</span>
+                        </button>
+                        <button class="building-card" onclick="state.selectedBuilding = 'Hostel'; goToPage('hostel-building-select')">
+                            <span class="building-label" style="bottom: 10px; right: 10px;">Hostel</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCleanerHome() {
+            return `
+                <div class="container">
+                    ${createHeader()}
+                    ${renderBuildingGrid()}
+                </div>
+            `;
+        }
+
+        function renderManagerHome() {
+            return `
+                <div class="container">
+                    ${createHeader()}
+                    ${renderBuildingGrid()}
+                </div>
+            `;
+        }
+
+        function renderHostelSelect() {
+            return `
+                <div class="container">
+                    ${createHeader()}
+                    <div class="centered">
+                        <h2>Select Building</h2>
+                        <div class="button-group">
+                            <button class="button" onclick="state.selectedHostelBuilding = '55'; goToPage('floor-select')">55</button>
+                            <button class="button" onclick="state.selectedHostelBuilding = '57'; goToPage('floor-select')">57</button>
+                            <button class="button" onclick="state.selectedHostelBuilding = '59'; goToPage('floor-select')">59</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderFloorSelect() {
+            let floors = [];
+            if (state.selectedBuilding === 'Canteen') floors = ['Floor 2'];
+            else if (state.selectedBuilding === 'Buildings') floors = ['1', '2', '3', '4', '5', '6', '7'];
+            else if (state.selectedBuilding === 'Library') floors = ['1', '2', '3'];
+            else if (state.selectedBuilding === 'Hostel') floors = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+
+            return `
+                <div class="container">
+                    ${createHeader()}
+                    <div class="centered">
+                        <h2>Select Floor</h2>
+                        <div class="button-group">
+                            ${floors.map(floor => `
+                                <button class="button" onclick="
+                                    state.selectedFloor = '${floor}';
+                                    goToPage(state.selectedUser === 'Bo Chen' ? 'scan-options' : 'cubicle-info');
+                                ">${floor}</button>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderScanOptions() {
+            return `
+                <div class="container">
+                    ${createHeader()}
+                    <div class="centered">
+                        <div style="display: flex; flex-direction: column; gap: 30px;">
+                            <div class="scan-link" onclick="state.scanType = 'soap'; state.scanStep = 0; goToPage('scan-soap')">
+                                Scan the soap dispenser
+                            </div>
+                            <div class="scan-link" onclick="state.scanType = 'toilet'; state.scanStep = 0; goToPage('scan-toilet')">
+                                Scan the toilet paper
+                            </div>
+                            <div class="scan-link" onclick="state.scanType = 'air'; state.showAirResults = false; goToPage('scan-air')">
+                                Scan the air freshener
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCubicleInfo() {
+            const soapData = [
+                { label: 'Sink 1', value: 50 },
+                { label: 'Sink 2', value: 80 },
+                { label: 'Sink 3', value: 65 },
+                { label: 'Sink 4', value: 35 }
+            ];
+            const toiletData = [
+                { label: 'Cubicle 1', value: 75 },
+                { label: 'Cubicle 2', value: 45 },
+                { label: 'Cubicle 3', value: 90 },
+                { label: 'Cubicle 4', value: 20 }
+            ];
+            const airData = [
+                { label: 'Monday', value: 80 },
+                { label: 'Tuesday', value: 80 },
+                { label: 'Wednesday', value: 60 },
+                { label: 'Thursday', value: 20 },
+                { label: 'Friday', value: 20 },
+                { label: 'Saturday', value: 15 },
+                { label: 'Sunday', value: 10 }
+            ];
+
+            return `
+                <div class="container">
+                    ${createHeader()}
+                    <div class="content-wrapper">
+                        <div style="font-size: 14px; color: #5E7695; margin-bottom: 20px;">
+                            <div>Number of cubicles: 4</div>
+                            <div>Number of sinks: 4</div>
+                        </div>
+                        ${createBarChart(soapData, 'Soap Levels', 'Percentage of Soap remaining', 'Bo Chen')}
+                        ${createBarChart(toiletData, 'Toilet Paper Levels', 'Percentage of Toilet Paper remaining', 'Bo Chen')}
+                        ${createBarChart(airData, 'Air Freshener Levels', 'Percentage of Air Freshener remaining', 'Bo Chen')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderScanSoap() {
+            const labels = ['1st sink', '2nd sink', '3rd sink', '4th sink'];
+            
+            if (state.scanStep < 4) {
+                return `
+                    <div class="container">
+                        <div style="padding: 10px 20px;">
+                            <button class="nav-button" onclick="goBack()">Back</button>
+                        </div>
+                        <div class="centered">
+                            <h2>${labels[state.scanStep]}</h2>
+                            <div class="camera-view">
+                                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+                                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                    <circle cx="12" cy="13" r="4"></circle>
+                                </svg>
+                            </div>
+                            <button class="button" onclick="state.scanStep++; render()">
+                                ${state.scanStep === 3 ? 'Done' : 'Next'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                const soapData = [
+                    { label: 'Sink 1', value: 50 },
+                    { label: 'Sink 2', value: 80 },
+                    { label: 'Sink 3', value: 65 },
+                    { label: 'Sink 4', value: 35 }
+                ];
+                return `
+                    <div class="container">
+                        ${createHeader(true)}
+                        <div class="content-wrapper">
+                            ${createBarChart(soapData, 'Soap Levels', 'Percentage of Soap remaining', 'Bo Chen')}
+                            <div style="text-align: center; margin-top: 20px;">
+                                <button class="button" onclick="state.scanStep = 0; goToPage('scan-options')">Back</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function renderScanToilet() {
+            const labels = ['1st cubicle', '2nd cubicle', '3rd cubicle', '4th cubicle'];
+            
+            if (state.scanStep < 4) {
+                return `
+                    <div class="container">
+                        <div style="padding: 10px 20px;">
+                            <button class="nav-button" onclick="goBack()">Back</button>
+                        </div>
+                        <div class="centered">
+                            <h2>${labels[state.scanStep]}</h2>
+                            <div class="camera-view">
+                                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+                                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                    <circle cx="12" cy="13" r="4"></circle>
+                                </svg>
+                            </div>
+                            <button class="button" onclick="state.scanStep++; render()">
+                                ${state.scanStep === 3 ? 'Done' : 'Next'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                const toiletData = [
+                    { label: 'Cubicle 1', value: 75 },
+                    { label: 'Cubicle 2', value: 45 },
+                    { label: 'Cubicle 3', value: 90 },
+                    { label: 'Cubicle 4', value: 20 }
+                ];
+                return `
+                    <div class="container">
+                        ${createHeader(true)}
+                        <div class="content-wrapper">
+                            ${createBarChart(toiletData, 'Toilet Paper Levels', 'Percentage of Toilet Paper remaining', 'Bo Chen')}
+                            <div style="text-align: center; margin-top: 20px;">
+                                <button class="button" onclick="state.scanStep = 0; goToPage('scan-options')">Back</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function renderScanAir() {
+            const airData = [
+                { label: 'Monday', value: 80 },
+                { label: 'Tuesday', value: 80 },
+                { label: 'Wednesday', value: 60 },
+                { label: 'Thursday', value: 20 },
+                { label: 'Friday', value: 20 },
+                { label: 'Saturday', value: 15 },
+                { label: 'Sunday', value: 10 }
+            ];
+
+            if (!state.showAirResults) {
+                return `
+                    <div class="container">
+                        <div style="padding: 10px 20px;">
+                            <button class="nav-button" onclick="goBack()">Back</button>
+                        </div>
+                        <div class="centered">
+                            <h2>Wednesday</h2>
+                            <div class="camera-view">
+                                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+                                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                    <circle cx="12" cy="13" r="4"></circle>
+                                </svg>
+                            </div>
+                            <button class="button" onclick="state.showAirResults = true; render()">Done</button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="container">
+                        ${createHeader(true)}
+                        <div class="content-wrapper">
+                            ${createBarChart(airData, 'Air Freshener Levels', 'Percentage of Air Freshener remaining', 'Bo Chen')}
+                            <div style="text-align: center; margin-top: 20px;">
+                                <button class="button" onclick="state.showAirResults = false; goToPage('scan-options')">Back</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Main render function
+        function render() {
+            const app = document.getElementById('app');
+            let html = '';
+
+            switch(state.currentPage) {
+                case 'login':
+                    html = renderLoginPage();
+                    break;
+                case 'profile':
+                    html = renderProfilePage();
+                    break;
+                case 'cleaner-home':
+                    html = renderCleanerHome();
+                    break;
+                case 'manager-home':
+                    html = renderManagerHome();
+                    break;
+                case 'hostel-building-select':
+                    html = renderHostelSelect();
+                    break;
+                case 'floor-select':
+                    html = renderFloorSelect();
+                    break;
+                case 'scan-options':
+                    html = renderScanOptions();
+                    break;
+                case 'cubicle-info':
+                    html = renderCubicleInfo();
+                    break;
+                case 'scan-soap':
+                    html = renderScanSoap();
+                    break;
+                case 'scan-toilet':
+                    html = renderScanToilet();
+                    break;
+                case 'scan-air':
+                    html = renderScanAir();
+                    break;
+                default:
+                    html = renderLoginPage();
+            }
+
+            app.innerHTML = html;
+        }
+
+        // Initial render
+        render();
+    </script>
+</body>
+</html>
+
+
